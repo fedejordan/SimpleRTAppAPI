@@ -1,42 +1,29 @@
-//Device Token: f74f0d895a22249e75057c91e90543b5f5039cb5dd3880f9b4506b705680ceab
-var device = 'f74f0d895a22249e75057c91e90543b5f5039cb5dd3880f9b4506b705680ceab';
+var deviceToken = '<device-token>';
+var apn = require('apn');
 var join = require('path').join
   , pfx = join(__dirname, '/simplertapp-certificates.p12');
 
-// Create a new agent
-var apnagent = require('apnagent')
-  , agent = module.exports = new apnagent.Agent();
+var options = {
+  pfx: pfx,
+  passphrase: '<p12-password>',
+  production: false
+};
 
-  // set our credentials
-agent.set('pfx file', pfx);
-agent.set('passphrase', 'fede123');
+var apnProvider = new apn.Provider(options);
 
-// our credentials were for development
-agent.enable('sandbox');
+let notification = new apn.Notification();
+notification.alert = "Hello, world!";
+notification.badge = 1;
+notification.category = "GENERAL";
+notification.payload = {
+	tweetId: 1423
+}
+// notification.topic = "io.github.node-apn.test-app";
 
-agent.connect(function (err) {
-  // gracefully handle auth problems
-  if (err && err.name === 'GatewayAuthorizationError') {
-    console.log('Authentication Error: %s', err.message);
-    process.exit(1);
-  }
-
-  // handle any other err (not likely)
-  else if (err) {
-    throw err;
-  }
-
-  // it worked!
-  var env = agent.enabled('sandbox')
-    ? 'sandbox'
-    : 'production';
-
-  console.log('apnagent [%s] gateway connected', env);
-
-  agent.createMessage()
-  .device(device)
-  .alert('title', 'tituloooo')
-  .alert('¡Hola, soy una push notification!')
-  .send();
-
+apnProvider.send(notification, [deviceToken]).then( (response) => {
+		// response.sent: Array of device tokens to which the notification was sent succesfully
+		// response.failed: Array of objects containing the device token (`device`) and either an `error`, or a `status` and `response` from the API
+		// console.log("successfull device tokens: " + response.sent);
+		// console.log("failed device tokens: " + response.failed[0].response.reason);
+		process.exit();
 });
