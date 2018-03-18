@@ -35,6 +35,7 @@ agent.connect(function (err) {
 
   agent.createMessage()
   .device(device)
+  .alert('title', 'tituloooo')
   .alert('¡Hola, soy una push notification!')
   .send();
 
