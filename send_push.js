@@ -12,12 +12,9 @@ var options = {
 var apnProvider = new apn.Provider(options);
 
 let notification = new apn.Notification();
-notification.alert = "Hello, world!";
+notification.alert = "¡Hola, soy una push notification!";
 notification.badge = 1;
-notification.category = "GENERAL";
-notification.payload = {
-	tweetId: 1423
-}
+
 // notification.topic = "io.github.node-apn.test-app";
 
 apnProvider.send(notification, [deviceToken]).then( (response) => {
